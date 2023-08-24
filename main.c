@@ -161,8 +161,8 @@ void output(char ** input) {
 }
 
 void new_turn(char ** input) {
-    fill_new_array(input);
     output(input);
+    fill_new_array(input);
 }
 
 char getbreak() {
