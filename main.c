@@ -32,11 +32,20 @@ void copy_arr(char ** input, char ** copy) {
 }
 
 void init(char ** input) {
+    char * str = malloc(sizeof(char) * WIDTH + 2);
+    FILE * pfile = fopen("input/glider", "r");
     for(int i = 0; i < HEIGHT; i++) {
-        for(int j = 0; j < WIDTH + 1; j++) { // + 1 so it scans newlines;;
-            scanf("%c", &(input)[i][j]);
+        fgets(str, WIDTH + 2, pfile);
+        for(int j = 0; j < WIDTH + 1; j++) {
+            input[i][j] = str[j];
         }
     }
+    fclose(pfile);
+    /* for(int i = 0; i < HEIGHT; i++) { */
+    /*     for(int j = 0; j < WIDTH + 1; j++) { // + 1 so it scans newlines;; */
+    /*         scanf("%c", &(input)[i][j]); */
+    /*     } */
+    /* } */
 }
 
 int horizontal_flag(int j) {
@@ -171,12 +180,11 @@ int main() {
     /* } */
     input = memall();
     init(input);
-    /* initscr(); */
-    /* cbreak(); */
-    /* curs_set(0); */
-    /* noecho(); */
+    initscr();
+    /* raw(); */
+    cbreak();
+    noecho();
     /* init(input); */
-    /* move(0, 0); */
     /* output(input); */
     /* char c; */
     /* while(1) { */
@@ -185,15 +193,20 @@ int main() {
     /*     if(c == '.') break; */
     /*     refresh(); */
     /* } */
-    /* while(1) { */
-    /*     clear(); */
-    /*     new_turn(input); */
-    /*     refresh(); */
-    /*     if(getbreak() == '.') { */
-    /*         break; */
-    /*     } */
-    /*     sleep(1); */
-    /* } */
+    char c;
+    while(1) {
+        clear();
+        new_turn(input);
+        refresh();
+        while(1) {
+            c = getch();
+            /* scanw("%c", &c); */
+            if(c == 'l') break;
+            if(c == 'r') break;
+        }
+        if(c == 'l') break;
+        if(c == 'r') continue;
+    }
     /* printw("%d\n", check_neighbours(input, HEIGHT - 2, WIDTH - 1)); */
     endwin();
     for(int i = 0; i < HEIGHT; i++) free(input[i]);
