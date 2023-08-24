@@ -5,7 +5,7 @@ name := main
 rm := rm -f
 
 all: $(obj)
-	$(CC) $(src) -o $(name)
+	$(CC) $(src) -lncurses -o $(name)
 
 objclean:
 	$(rm) $(obj)

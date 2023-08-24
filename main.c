@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ncurses.h>
+#include <unistd.h>
 #define WIDTH 40
 #define HEIGHT 20
 
@@ -9,6 +11,26 @@ char ** memall() {
     return input;
 }
 
+char ** copy_into_new_arr(char ** input) {
+    char ** copy = memall();
+    for(int i = 0; i < HEIGHT; i++) {
+        for(int j = 0; j < WIDTH; j++) {
+            copy[i][j] = input[i][j];
+        }
+    }
+    return copy;
+}
+
+void copy_arr(char ** input, char ** copy) {
+    for(int i = 0; i < HEIGHT; i++) {
+        for(int j = 0; j < WIDTH; j++) {
+            input[i][j] = copy[i][j];
+        }
+    }
+    for(int i = 0; i < HEIGHT; i++) free(copy[i]);
+    free(copy);
+}
+
 void init(char ** input) {
     for(int i = 0; i < HEIGHT; i++) {
         for(int j = 0; j < WIDTH + 1; j++) { // + 1 so it scans newlines;;
@@ -16,33 +38,6 @@ void init(char ** input) {
         }
     }
 }
-
-
-/* int check_right(char ** input, int i, int j) { */
-/*     int res = 0; */
-/*     for(int s = 0; s < 3; s++) { */
-/*         if(input[i - 1 + s][j + 1] == '*') res++; */
-/*     } */
-/*     return res; */
-/* } */
-
-/* int check_left(char ** input, int i, int j) { */
-/*     int res = 0; */
-/*     for(int s = 0; s < 3; s++) { */
-/*         if(input[i - 1 + s][j - 1] == '*') res++; */
-/*     } */
-/*     return res; */
-/* } */
-
-/* int check_bot(char ** input, int i, int j) { */
-/*     if(input[i + 1][j] == '*') return 1; */
-/*     return 0; */
-/* } */
-
-/* int check_top(char ** input, int i, int j) { */
-/*     if(input[i - 1][j] == '*') return 1; */
-/*     return 0; */
-/* } */
 
 int horizontal_flag(int j) {
     if(j == 0) return -1;
@@ -122,13 +117,48 @@ int check_neighbours(char ** input, int i, int j) {
     return sum;
 }
 
+char new_symbol(char old, int neighbours) {
+    switch(old) {
+        case '*':
+            if(neighbours >= 2 && neighbours <= 3) return '*';
+            else return '.';
+            break;
+        case '.':
+            if(neighbours == 3) return '*';
+            else return '.';
+            break;
+    }
+    return '.';
+}
+
+void fill_new_array(char ** input) {
+    char ** new_arr = memall();
+    for(int i = 0; i < HEIGHT; i++) {
+        for(int j = 0; j < WIDTH; j++) {
+            int neighbours = check_neighbours(input, i, j);
+            new_arr[i][j] = new_symbol(input[i][j], neighbours);
+        }
+    }
+    copy_arr(input, new_arr);
+}
+
 void output(char ** input) {
     for(int i = 0; i < HEIGHT; i++) {
         for(int j = 0; j < WIDTH; j++) {
-            printf("%c", input[i][j]);
+            printw("%c", input[i][j]);
         }
-        printf("\n");
+        printw("\n");
     }
+}
+
+void new_turn(char ** input) {
+    fill_new_array(input);
+    output(input);
+}
+
+char getbreak() {
+    char c = getch();
+    return c;
 }
 
 int main() {
@@ -141,8 +171,31 @@ int main() {
     /* } */
     input = memall();
     init(input);
-    output(input);
-    printf("%d\n", check_neighbours(input, 0, 0));
+    /* initscr(); */
+    /* cbreak(); */
+    /* curs_set(0); */
+    /* noecho(); */
+    /* init(input); */
+    /* move(0, 0); */
+    /* output(input); */
+    /* char c; */
+    /* while(1) { */
+    /*     c = getch(); */
+    /*     printw("%c", c); */
+    /*     if(c == '.') break; */
+    /*     refresh(); */
+    /* } */
+    /* while(1) { */
+    /*     clear(); */
+    /*     new_turn(input); */
+    /*     refresh(); */
+    /*     if(getbreak() == '.') { */
+    /*         break; */
+    /*     } */
+    /*     sleep(1); */
+    /* } */
+    /* printw("%d\n", check_neighbours(input, HEIGHT - 2, WIDTH - 1)); */
+    endwin();
     for(int i = 0; i < HEIGHT; i++) free(input[i]);
     free(input);
     return 0;
