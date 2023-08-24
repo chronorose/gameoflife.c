@@ -1,7 +1,8 @@
 CC := gcc
-src := main.c
-obj := main.o
-name := main
+src := src/main.c
+obj := src/main.o
+build := build/
+name := $(build)main
 rm := rm -f
 
 all: $(obj)
