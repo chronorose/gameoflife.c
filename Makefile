@@ -2,7 +2,7 @@ CC := gcc
 src := src/main.c
 obj := src/main.o
 build := build/
-name := $(build)main
+name := $(build)gameoflife
 rm := rm -f
 
 all: $(obj)
