@@ -11,16 +11,6 @@ char ** memall() {
     return input;
 }
 
-char ** copy_into_new_arr(char ** input) {
-    char ** copy = memall();
-    for(int i = 0; i < HEIGHT; i++) {
-        for(int j = 0; j < WIDTH; j++) {
-            copy[i][j] = input[i][j];
-        }
-    }
-    return copy;
-}
-
 void copy_arr(char ** input, char ** copy) {
     for(int i = 0; i < HEIGHT; i++) {
         for(int j = 0; j < WIDTH; j++) {
@@ -41,11 +31,6 @@ void init(char ** input) {
         }
     }
     fclose(pfile);
-    /* for(int i = 0; i < HEIGHT; i++) { */
-    /*     for(int j = 0; j < WIDTH + 1; j++) { // + 1 so it scans newlines;; */
-    /*         scanf("%c", &(input)[i][j]); */
-    /*     } */
-    /* } */
 }
 
 int horizontal_flag(int j) {
@@ -70,45 +55,37 @@ int check_helper(char ** input, int i, int j, int hf, int vf, int turn) {
         case 0:
             if(hf == -1) j = WIDTH;
             if(vf == -1) i = HEIGHT;
-            /* printf("%d %d\n", i, j); */
             return check(input, i - 1, j - 1);
             break;
         case 1:
             if(vf == -1) i = HEIGHT;
-            /* printf("%d %d\n", i, j); */
             return check(input, i - 1, j);
             break;
         case 2:
             if(hf == 1) j = -1;
             if(vf == -1) i = HEIGHT;
-            /* printf("%d %d\n", i, j); */
             return check(input, i - 1, j + 1);
             break;
         case 3:
             if(hf == 1) j = -1;
-            /* printf("%d %d\n", i, j); */
             return check(input, i, j + 1);
             break;
         case 4:
             if(hf == 1) j = -1;
             if(vf == 1) i = -1;
-            /* printf("%d %d\n", i, j); */
             return check(input, i + 1, j + 1);
             break;
         case 5:
             if(vf == 1) i = -1;
-            /* printf("%d %d\n", i, j); */
             return check(input, i + 1, j);
             break;
         case 6:
             if(hf == -1) j = WIDTH;
             if(vf == 1) i = -1;
-            /* printf("%d %d\n", i, j); */
             return check(input, i + 1, j - 1);
             break;
         case 7:
             if(hf == -1) j = WIDTH;
-            /* printf("%d %d\n", i, j); */
             return check(input, i, j - 1);
             break;
     }
@@ -158,58 +135,42 @@ void output(char ** input) {
         }
         printw("\n");
     }
+    printw("Next turn -> R\n");
+    printw("Leave -> L\n");
 }
 
 void new_turn(char ** input) {
-    output(input);
-    fill_new_array(input);
-}
-
-char getbreak() {
-    char c = getch();
-    return c;
-}
-
-int main() {
-    char ** input;
-    /* for(int i = 0; i < HEIGHT; i++) { // its for generating empty field with ./main > input/empty_input */
-    /*     for(int j = 0; j < WIDTH; j++) { */
-    /*         printf("*"); */
-    /*     } */
-    /*     printf("\n"); */
-    /* } */
-    input = memall();
-    init(input);
-    initscr();
-    /* raw(); */
-    cbreak();
-    noecho();
-    /* init(input); */
-    /* output(input); */
-    /* char c; */
-    /* while(1) { */
-    /*     c = getch(); */
-    /*     printw("%c", c); */
-    /*     if(c == '.') break; */
-    /*     refresh(); */
-    /* } */
     char c;
     while(1) {
         clear();
-        new_turn(input);
+        output(input);
+        fill_new_array(input);
         refresh();
         while(1) {
             c = getch();
-            /* scanw("%c", &c); */
-            if(c == 'l') break;
-            if(c == 'r') break;
+            printw("%c", c);
+            if(c == 'l' || c == 'L') break;
+            if(c == 'r' || c == 'R') break;
         }
-        if(c == 'l') break;
-        if(c == 'r') continue;
+        if(c == 'l' || c == 'L') break;
+        if(c == 'r' || c == 'R') continue;
     }
-    /* printw("%d\n", check_neighbours(input, HEIGHT - 2, WIDTH - 1)); */
-    endwin();
+}
+
+void setup() {
+    char ** input;
+    initscr();
+    cbreak();
+    noecho();
+    input = memall();
+    init(input);
+    new_turn(input);
     for(int i = 0; i < HEIGHT; i++) free(input[i]);
     free(input);
+}
+
+int main() {
+    setup();
+    endwin();
     return 0;
 }
