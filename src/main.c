@@ -4,6 +4,10 @@
 #include <unistd.h>
 #define WIDTH 40
 #define HEIGHT 20
+#define GLIDER "input/glider"
+#define BLOCK "input/block"
+#define BLINKER "input/blinker"
+#define TOAD "input/toad"
 
 char ** memall() {
     char ** input = malloc(sizeof(char *) * HEIGHT);
@@ -23,7 +27,7 @@ void copy_arr(char ** input, char ** copy) {
 
 void init(char ** input) {
     char * str = malloc(sizeof(char) * WIDTH + 2);
-    FILE * pfile = fopen("input/glider", "r");
+    FILE * pfile = fopen(TOAD, "r");
     for(int i = 0; i < HEIGHT; i++) {
         fgets(str, WIDTH + 2, pfile);
         for(int j = 0; j < WIDTH + 1; j++) {
@@ -148,7 +152,6 @@ void new_turn(char ** input) {
         refresh();
         while(1) {
             c = getch();
-            printw("%c", c);
             if(c == 'l' || c == 'L') break;
             if(c == 'r' || c == 'R') break;
         }
